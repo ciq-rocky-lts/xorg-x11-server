@@ -46,7 +46,7 @@
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
 Version:   1.20.11
-Release:   15%{?gitdate:.%{gitdate}}%{?dist}
+Release:   25%{?gitdate:.%{gitdate}}%{?dist}
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X
@@ -110,6 +110,7 @@ Patch202: 0001-modesetting-Reduce-glamor-initialization-failed-mess.patch
 Patch203: 0001-xfree86-Only-switch-to-original-VT-if-it-is-active.patch
 Patch204: 0001-xf86-logind-Fix-drm_drop_master-before-vt_reldisp.patch
 Patch205: 0001-present-Check-for-NULL-to-prevent-crash.patch
+Patch206: 0001-present-Send-a-PresentConfigureNotify-event-for-dest.patch
 
 # CVE-2021-4011
 Patch10009: 0001-record-Fix-out-of-bounds-access-in-SwapCreateRegiste.patch
@@ -145,6 +146,50 @@ Patch10024: 0007-xkb-reset-the-radio_groups-pointer-to-NULL-after-fre.patch
 Patch10025: 0008-Xext-fix-invalid-event-type-mask-in-XTestSwapFakeInp.patch
 # CVE-2023-0494
 Patch10026: 0001-Xi-fix-potential-use-after-free-in-DeepCopyPointerCl.patch
+# CVE-2023-1393
+Patch10027: 0001-composite-Fix-use-after-free-of-the-COW.patch
+# CVE-2023-5367
+Patch10028: 0001-Xi-randr-fix-handling-of-PropModeAppend-Prepend.patch
+# CVE-2023-5380
+Patch10029: 0002-mi-reset-the-PointerWindows-reference-on-screen-swit.patch
+# CVE-2023-6377
+Patch10030: 0001-Xi-allocate-enough-XkbActions-for-our-buttons.patch
+# CVE-2023-6478
+Patch10031: 0001-randr-avoid-integer-truncation-in-length-check-of-Pr.patch
+# CVE-2023-6816
+Patch10032: 0001-dix-allocate-enough-space-for-logical-button-maps.patch
+# CVE-2024-0229
+Patch10033: 0002-dix-Allocate-sufficient-xEvents-for-our-DeviceStateN.patch
+Patch10034: 0003-dix-fix-DeviceStateNotify-event-calculation.patch
+Patch10035: 0004-Xi-when-creating-a-new-ButtonClass-set-the-number-of.patch
+# CVE-2024-21885
+Patch10036: 0005-Xi-flush-hierarchy-events-after-adding-removing-mast.patch
+# CVE-2024-21886
+Patch10037: 0006-Xi-do-not-keep-linked-list-pointer-during-recursion.patch
+Patch10038: 0007-dix-when-disabling-a-master-float-disabled-slaved-de.patch
+# CVE-2024-0408
+Patch10039: 0008-glx-Call-XACE-hooks-on-the-GLX-buffer.patch
+# CVE-2024-0409
+Patch10040: 0009-ephyr-xwayland-Use-the-proper-private-key-for-cursor.patch
+# Fix compilation error
+Patch10041: 0001-hw-Rename-boolean-config-value-field-from-bool-to-bo.patch
+# Related to CVE-2024-21886
+Patch10042: 0001-dix-Fix-use-after-free-in-input-device-shutdown.patch
+# Fix compilation error on i686
+Patch10043: 0001-ephyr-Fix-incompatible-pointer-type-build-error.patch
+# Fix copy and paste error in CVE-2024-0229
+Patch10044: 0001-dix-fix-valuator-copy-paste-error-in-the-DeviceState.patch
+# CVE-2024-31080
+Patch10045: 0001-Xi-ProcXIGetSelectedEvents-needs-to-use-unswapped-le.patch
+# CVE-2024-31081
+Patch10046: 0002-Xi-ProcXIPassiveGrabDevice-needs-to-use-unswapped-le.patch
+# CVE-2024-31082
+Patch10047: 0003-Xquartz-ProcAppleDRICreatePixmap-needs-to-use-unswap.patch
+# CVE-2024-31083
+Patch10048: 0004-render-fix-refcounting-of-glyphs-during-ProcRenderAd.patch
+Patch10049: 0001-render-Avoid-possible-double-free-in-ProcRenderAddGl.patch
+# CVE-2024-9632
+Patch10050: 0001-xkb-Fix-buffer-overflow-in-_XkbSetCompatMap.patch
 
 BuildRequires: make
 BuildRequires: systemtap-sdt-devel
@@ -287,6 +332,7 @@ License: MIT and GPLv2
 Requires: xorg-x11-server-common >= %{version}-%{release}
 # required for xvfb-run
 Requires: xorg-x11-xauth
+Requires: util-linux
 Provides: Xvfb
 
 %description Xvfb
@@ -572,6 +618,52 @@ find %{inst_srcdir}/hw/xfree86 -name \*.c -delete
 
 
 %changelog
+* Tue Oct 29 2024 José Expósito <jexposit@redhat.com> - 1.20.11-25
+- CVE fix for CVE-2024-9632
+
+* Wed Apr 10 2024 José Expósito <jexposit@redhat.com> - 1.20.11-24
+- Fix regression caused by the fix for CVE-2024-31083
+
+* Thu Apr 04 2024 José Expósito <jexposit@redhat.com> - 1.20.11-23
+- CVE fix for: CVE-2024-31080, CVE-2024-31081, CVE-2024-31082 and
+  CVE-2024-31083
+- Add util-linux as a dependency of Xvfb
+- Fix compilation error on i686
+
+* Thu Jan 18 2024 José Expósito <jexposit@redhat.com> - 1.20.11-22
+- Fix use after free related to CVE-2024-21886
+
+* Tue Jan 16 2024 José Expósito <jexposit@redhat.com> - 1.20.11-21
+- CVE fix for: CVE-2023-6816, CVE-2024-0229, CVE-2024-21885, CVE-2024-21886,
+  CVE-2024-0408 and CVE-2024-0409
+  Resolves: https://issues.redhat.com/browse/RHEL-21207
+  Resolves: https://issues.redhat.com/browse/RHEL-20528
+  Resolves: https://issues.redhat.com/browse/RHEL-20378
+  Resolves: https://issues.redhat.com/browse/RHEL-20384
+  Resolves: https://issues.redhat.com/browse/RHEL-21191
+  Resolves: https://issues.redhat.com/browse/RHEL-21198
+
+* Thu Dec 14 2023 José Expósito <jexposit@redhat.com> - 1.20.11-20
+- CVE fix for: CVE-2023-6377, CVE-2023-6478
+  Resolves: https://issues.redhat.com/browse/RHEL-18321
+  Resolves: https://issues.redhat.com/browse/RHEL-18327
+
+* Wed Oct 25 2023 José Expósito <jexposit@redhat.com> - 1.20.11-19
+- CVE fix for: CVE-2023-5380
+  Resolves: https://issues.redhat.com/browse/RHEL-14060
+
+* Wed Oct 25 2023 José Expósito <jexposit@redhat.com> - 1.20.11-18
+- CVE fix for: CVE-2023-5367
+  Resolves: https://issues.redhat.com/browse/RHEL-13430
+
+* Tue Jun  6 2023 Olivier Fourdan <ofourdan@redhat.com> - 1.20.11-17
+- Backport fix for a deadlock with DRI3
+  Resolves: rhbz#2192556
+
+* Fri Mar 31 2023 Olivier Fourdan <ofourdan@redhat.com> - 1.20.11-16
+- CVE fix for: CVE-2023-1393
+  Resolves: rhbz#2180296
+
 * Wed Feb 22 2023 Olivier Fourdan <ofourdan@redhat.com> - 1.20.11-15
 - Rebuild for the missing debuginfo
   Related: rhbz#2169522
